@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patna Labor Platform — सस्ती घरेलू मदद (Pilot Demo)</title>
+<meta name="description" content="Pilot demo: affordable hourly/daily blue-collar help in Patna — cleaning, laundry, odd jobs, manpower — with coordinator-led phone dispatch.">
+<style>
+:root{--pri:#0e7c5b;--pri-d:#0a5a43;--acc:#f59e0b;--acc-d:#b45309;--bg:#f4faf7;--card:#ffffff;--ink:#1f2937;--mut:#6b7280;--line:#e3ece8;--red:#dc2626;--blue:#1d4ed8;--radius:14px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.topbar{background:var(--pri-d);color:#fff;padding:.75rem 1rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.topbar .logo{font-size:1.35rem}
+.topbar h1{font-size:1.05rem;margin:0;font-weight:800}
+.topbar small{display:block;font-weight:400;font-size:.75rem;opacity:.9}
+.badge-demo{background:var(--acc);color:#422006;font-weight:800;font-size:.72rem;padding:.25rem .6rem;border-radius:999px;letter-spacing:.03em}
+.tabs{position:sticky;top:0;z-index:20;background:#fff;display:flex;overflow-x:auto;border-bottom:2px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.tabs a{padding:.85rem 1rem;white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:700;font-size:.92rem;border-bottom:3px solid transparent}
+.tabs a:active,.tabs a:hover{color:var(--pri);border-bottom-color:var(--pri)}
+main{display:block}
+section{padding:1.4rem 1rem;max-width:880px;margin:0 auto}
+section h2{font-size:1.35rem;margin:.2rem 0 .6rem;color:var(--pri-d)}
+section h2 .hi{color:var(--acc-d)}
+.lead{font-size:1.02rem;color:#374151}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;margin:.9rem 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h3{margin:.1rem 0 .5rem;font-size:1.05rem}
+.pill{display:inline-block;font-size:.75rem;font-weight:800;padding:.2rem .65rem;border-radius:999px;margin:.15rem .15rem .15rem 0}
+.pill-green{background:#d1fae5;color:#065f46}.pill-amber{background:#fef3c7;color:#92400e}.pill-blue{background:#dbeafe;color:#1e40af}.pill-red{background:#fee2e2;color:#991b1b}.pill-gray{background:#f3f4f6;color:#374151}
+.grid{display:grid;grid-template-columns:1fr;gap:.9rem}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.steps{counter-reset:step;list-style:none;padding:0;margin:.6rem 0}
+.steps li{counter-increment:step;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem .9rem 3.4rem;margin:.6rem 0;position:relative}
+.steps li::before{content:counter(step);position:absolute;left:.9rem;top:.8rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--pri);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.rate{font-size:1.25rem;font-weight:800;color:var(--pri-d)}
+.btn{display:block;width:100%;background:var(--pri);color:#fff;border:0;border-radius:12px;padding:.9rem 1.2rem;font-size:1.02rem;font-weight:800;cursor:pointer;margin-top:.8rem}
+.btn:hover{background:var(--pri-d)}
+.btn-sec{background:#fff;color:var(--pri-d);border:2px solid var(--pri)}
+.btn-danger{background:#fff;color:var(--red);border:2px solid var(--red)}
+.btn-sm{width:auto;display:inline-block;padding:.45rem .9rem;font-size:.85rem;margin:.25rem .25rem 0 0}
+label{display:block;font-weight:700;margin:.7rem 0 .25rem;font-size:.92rem}
+input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;padding:.75rem .8rem;border:1.5px solid var(--line);border-radius:10px;font-size:1rem;background:#fff;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:var(--pri)}
+.checks{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem}
+.checks label{font-weight:600;font-size:.88rem;background:#f3f4f6;border:1.5px solid var(--line);border-radius:999px;padding:.4rem .8rem;margin:0;cursor:pointer}
+.checks input{margin-right:.35rem;accent-color:var(--pri)}
+.notice{background:#fffbeb;border:2px solid var(--acc);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0}
+.notice h3{margin:.1rem 0 .4rem;color:var(--acc-d)}
+.notice-wage{background:#ecfdf5;border:2px solid var(--pri);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0}
+.notice-wage h3{margin:.1rem 0 .4rem;color:var(--pri-d)}
+table.rates{width:100%;border-collapse:collapse;font-size:.93rem}
+table.rates th,table.rates td{border:1px solid var(--line);padding:.55rem .6rem;text-align:left}
+table.rates th{background:#ecfdf5;color:var(--pri-d)}
+.area-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.5rem 0}
+.area-chips span{background:#e0f2ec;color:var(--pri-d);font-weight:700;font-size:.85rem;padding:.35rem .8rem;border-radius:999px}
+.statusbar{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;margin:.5rem 0}
+.tiny{font-size:.8rem;color:var(--mut)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+footer{background:var(--pri-d);color:#e7f4ee;padding:1.4rem 1rem;font-size:.85rem}
+footer .wrap{max-width:880px;margin:0 auto}
+footer a{color:#fde68a}
+.hero{background:linear-gradient(135deg,#0a5a43 0%,#0e7c5b 60%,#14957a 100%);color:#fff;border-radius:18px;padding:1.6rem 1.2rem;margin:.4rem 0 1rem}
+.hero h2{color:#fff;font-size:1.6rem;margin:.2rem 0 .5rem}
+.hero p{opacity:.95;margin:.4rem 0}
+.hero .btn{background:var(--acc);color:#422006;margin-top:1rem}
+.kv{display:flex;justify-content:space-between;gap:.6rem;padding:.3rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.kv b{text-align:right}
+.empty{color:var(--mut);font-style:italic}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">🛠️</div>
+  <h1>Patna Labor Platform <small>पटना लेबर प्लेटफ़ॉर्म — सस्ती घरेलू मदद, घंटों या दिन के हिसाब से</small></h1>
+  <span class="badge-demo">PILOT DEMO</span>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <a href="#home">🏠 Home</a>
+  <a href="#services">🧹 Services</a>
+  <a href="#pricing">💰 Pricing</a>
+  <a href="#book">📝 Book</a>
+  <a href="#join">🙋 Join as Worker</a>
+  <a href="#coordinator">📋 Coordinator</a>
+  <a href="#info">ℹ️ Areas &amp; Wages</a>
+</nav>
+
+<main>
+<!-- ============ HOME ============ -->
+<section id="home">
+  <div class="hero">
+    <span class="pill pill-amber">PILOT DEMO — not an operating service</span>
+    <h2>घर के काम के लिए भरोसेमंद मदद<br>Affordable hourly &amp; daily help in Patna</h2>
+    <p>Room cleaning, laundry, odd jobs and manpower — matched by a human coordinator over a phone call. Workers don't need a smartphone: our coordinator calls them and guides them to your doorstep.</p>
+    <a href="#book" class="btn" style="text-align:center;text-decoration:none">📝 Book a Worker — बुक करें</a>
+  </div>
+
+  <h2><span class="hi">कैसे काम करता है</span> • How it works</h2>
+  <ol class="steps">
+    <li><b>Request / Call — अनुरोध करें:</b> Fill the booking form below or call the coordinator with your need, area and time slot.</li>
+    <li><b>Coordinator matches — समन्वयक चुनता है:</b> The coordinator picks a nearby worker with the right skills from the register and confirms with you on phone.</li>
+    <li><b>Worker arrives — काम होता है:</b> The worker is guided to your address by phone (they only need a basic mobile phone) and completes the work.</li>
+    <li><b>Pay worker directly — सीधे भुगतान:</b> You pay the <b>worker directly</b> in cash or UPI. The platform takes only a small flat <b>₹49 booking fee</b> — no hidden charges, no commission cut from the worker's pay.</li>
+  </ol>
+
+  <div class="card">
+    <h3>📍 Serving Patna areas <span class="tiny">(pilot)</span></h3>
+    <div class="area-chips">
+      <span>Boring Road</span><span>Digha</span><span>Anisabad</span><span>Kankarbagh</span><span>Patna City</span><span>Danapur</span><span>Bailey Road</span><span>Rajendra Nagar</span>
+    </div>
+    <p class="tiny">Morning labour-gathering points (approx. 7–10 AM) are field inputs shared by the pilot team and are being confirmed on the ground.</p>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <h2><span class="hi">सेवाएँ</span> • Services catalogue</h2>
+  <p class="lead">Guide rates for the Patna pilot. Final pay is agreed with the worker before work starts — and a full day's worker pay must never go below the Bihar statutory minimum (see Wages section).</p>
+  <div class="grid">
+    <div class="card">
+      <h3>🧺 Laundry <span class="tiny">• कपड़े धुलाई</span></h3>
+      <p>Washing, drying and folding clothes at your home.</p>
+      <div class="rate">₹99–149 <span class="tiny">/ hour (guide)</span></div>
+    </div>
+    <div class="card">
+      <h3>🧹 Room Cleaning <span class="tiny">• कमरे की सफाई</span></h3>
+      <p>Sweeping, mopping, dusting, bathroom cleaning.</p>
+      <div class="rate">₹99–149 <span class="tiny">/ hour (guide)</span></div>
+    </div>
+    <div class="card">
+      <h3>🔧 Odd Jobs <span class="tiny">• छोटे-मोटे काम</span></h3>
+      <p>Loading/unloading, shifting help, gardening, minor repairs assistance, painting help.</p>
+      <div class="rate">₹99–149 <span class="tiny">/ hour (guide)</span></div>
+    </div>
+    <div class="card">
+      <h3>🏗️ Construction / General Manpower <span class="tiny">• मज़दूर</span></h3>
+      <p>Daily-wage helpers for construction sites, shops, events and heavy work (8-hour day).</p>
+      <div class="rate">₹499 <span class="tiny">/ day (guide, 8 hrs)</span></div>
+    </div>
+  </div>
+  <div class="notice">
+    <h3>⚠️ Honest pricing note</h3>
+    <p>These are <b>guide rates</b>, not fixed prices. You and the worker agree the final amount on the coordinator's call <b>before</b> work begins. The platform never takes a cut from the worker's pay.</p>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing">
+  <h2><span class="hi">मूल्य</span> • Transparent pricing</h2>
+  <div class="card">
+    <h3>💵 You pay the worker directly</h3>
+    <p>When the work is done, pay the worker <b>directly</b> — cash or UPI, your choice. The money goes to the worker, not through us.</p>
+  </div>
+  <div class="card">
+    <h3>🎟️ Platform booking fee: <span class="rate">₹49</span> flat per booking</h3>
+    <p>This flat fee keeps the coordinator service running. It is shown separately on every booking — <b>no hidden charges, ever</b>. (Figure is adjustable by the platform owner.)</p>
+  </div>
+  <h3>Guide rate table</h3>
+  <table class="rates">
+    <tr><th>Service</th><th>Guide rate</th><th>Booking fee</th></tr>
+    <tr><td>Laundry (hourly)</td><td>₹99–149 / hour</td><td rowspan="4" style="text-align:center;font-weight:800">₹49<br><span class="tiny">flat / booking</span></td></tr>
+    <tr><td>Room cleaning (hourly)</td><td>₹99–149 / hour</td></tr>
+    <tr><td>Odd jobs (hourly)</td><td>₹99–149 / hour</td></tr>
+    <tr><td>Manpower (full day, 8 hrs)</td><td>₹499 / day</td></tr>
+  </table>
+  <p class="tiny">Example: a 2-hour cleaning at the guide mid-rate ≈ ₹248 to the worker + ₹49 booking fee = ₹297 total. Worker pay for a full day must be ≥ ₹436 (Bihar statutory minimum, from 1 April 2026).</p>
+</section>
+
+<!-- ============ BOOK ============ -->
+<section id="book">
+  <h2><span class="hi">बुक करें</span> • Book a worker</h2>
+  <p class="lead">Fill this form — your request enters the coordinator's pipeline below. The coordinator will call you to confirm.</p>
+  <div class="card">
+    <form id="bookingForm">
+      <label for="bName">Your name • आपका नाम</label>
+      <input type="text" id="bName" required placeholder="e.g., Demo Customer" maxlength="60">
+      <label for="bPhone">Phone • फ़ोन नंबर</label>
+      <input type="tel" id="bPhone" required placeholder="10-digit mobile" pattern="[0-9+ -]{10,15}" maxlength="15">
+      <label for="bService">Service • सेवा</label>
+      <select id="bService" required>
+        <option value="Laundry">🧺 Laundry (₹99–149/hr)</option>
+        <option value="Room Cleaning">🧹 Room Cleaning (₹99–149/hr)</option>
+        <option value="Odd Jobs">🔧 Odd Jobs (₹99–149/hr)</option>
+        <option value="Manpower">🏗️ Manpower — full day (₹499/day)</option>
+      </select>
+      <label for="bDate">Date • तारीख</label>
+      <input type="date" id="bDate" required>
+      <label for="bSlot">Time slot • समय</label>
+      <select id="bSlot" required>
+        <option value="1 hour">1 hour — guide ₹99–149</option>
+        <option value="2 hours">2 hours — guide ₹198–298</option>
+        <option value="4 hours">4 hours — guide ₹396–596</option>
+        <option value="Full day (8 hrs)">Full day (8 hrs) — guide ₹499</option>
+      </select>
+      <label for="bArea">Patna area • क्षेत्र</label>
+      <select id="bArea" required></select>
+      <label for="bAddr">Address / landmark • पता</label>
+      <textarea id="bAddr" rows="2" required placeholder="House no., street, nearby landmark" maxlength="200"></textarea>
+      <div class="notice" style="margin:.8rem 0">
+        <b>Payment:</b> you will pay the <b>worker directly</b> (cash/UPI) after the work. Platform booking fee: <b>₹49</b> (flat, shown separately).
+      </div>
+      <button class="btn" type="submit">✅ Request Booking — अनुरोध भेजें</button>
+    </form>
+    <p id="bookMsg" class="tiny"></p>
+  </div>
+
+  <h3>📑 My requests <span class="tiny">(demo — stored in this browser only)</span></h3>
+  <div id="myBookings"></div>
+</section>
+
+<!-- ============ JOIN ============ -->
+<section id="join">
+  <h2><span class="hi">मज़दूर जुड़ें</span> • Join as a worker</h2>
+  <p class="lead">No smartphone needed — a basic mobile phone is enough. The coordinator will call you with job details.</p>
+  <div class="card">
+    <form id="workerForm">
+      <label for="wName">Full name • पूरा नाम</label>
+      <input type="text" id="wName" required placeholder="e.g., Demo Worker" maxlength="60">
+      <label for="wPhone">Phone • फ़ोन नंबर (own or family member's)</label>
+      <input type="tel" id="wPhone" required placeholder="10-digit mobile" pattern="[0-9+ -]{10,15}" maxlength="15">
+      <label>Skills • हुनर <span class="tiny">(tick all that apply)</span></label>
+      <div class="checks" id="wSkills"></div>
+      <label for="wArea">Home area • घर का क्षेत्र</label>
+      <select id="wArea" required></select>
+      <label>Availability • उपलब्धता</label>
+      <div class="checks" id="wAvail"></div>
+      <button class="btn" type="submit">✅ Register — रजिस्टर करें</button>
+    </form>
+    <p id="workerMsg" class="tiny"></p>
+  </div>
+  <div class="notice">
+    <h3>🤝 Worker promise</h3>
+    <p><b>No registration fee, ever.</b> You are paid directly by the customer (cash/UPI). A full day's pay will never be set below the Bihar statutory minimum of <b>₹436/day</b>.</p>
+  </div>
+</section>
+
+<!-- ============ COORDINATOR ============ -->
+<section id="coordinator">
+  <h2><span class="hi">समन्वयक</span> • Coordinator view <span class="pill pill-amber">DEMO</span></h2>
+  <p class="lead">Demo of the coordinator's desk: track every booking through the pipeline, assign workers, and filter the worker register by skill, area and availability.</p>
+
+  <h3>🔄 Booking pipeline</h3>
+  <div id="pipeline"></div>
+
+  <h3>👷 Worker register <span class="tiny">(demo data)</span></h3>
+  <div class="card">
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div><label for="fSkill">Skill</label><select id="fSkill"><option value="">All skills</option></select></div>
+      <div><label for="fArea">Area</label><select id="fArea"><option value="">All areas</option></select></div>
+      <div><label for="fAvail">Availability</label><select id="fAvail"><option value="">Any</option><option>Morning (7–11 AM)</option><option>Afternoon (11 AM–3 PM)</option><option>Evening (3–7 PM)</option></select></div>
+    </div>
+  </div>
+  <div id="workerList"></div>
+</section>
+
+<!-- ============ INFO ============ -->
+<section id="info">
+  <h2><span class="hi">क्षेत्र व मज़दूरी</span> • Areas, wages &amp; safety</h2>
+
+  <h3>📍 Patna service areas (pilot)</h3>
+  <div class="card"><div class="area-chips" id="areaChips"></div>
+  <p class="tiny">Morning gathering points such as Boring Road, Digha and Anisabad (approx. 7–10 AM) are field inputs from the pilot team and are being confirmed on the ground.</p></div>
+
+  <div class="notice-wage">
+    <h3>⚖️ Wage floor — read this</h3>
+    <p>Bihar's statutory minimum wage for <b>unskilled workers is ₹436 per day</b> (effective 1 April 2026; ₹428/day from Oct 2025). <b>A full day's worker pay on this platform must never go below ₹436.</b> Guide rates on this page are minimums for fair pay, not targets to undercut.</p>
+  </div>
+
+  <h3>🦺 Basic safety guidance</h3>
+  <div class="card"><ul style="margin:.2rem 0;padding-left:1.2rem">
+    <li><b>Households:</b> confirm the worker's name with the coordinator before letting anyone in; keep valuables secured; never ask a worker to do unsafe electrical, height or chemical work without proper gear.</li>
+    <li><b>Workers:</b> never pay any registration or "job confirmation" fee to anyone — registration here is free; share your live location with family when going to a new address; you may leave any site that feels unsafe and call the coordinator.</li>
+    <li><b>Both:</b> agree the pay and the task list on the coordinator's call <b>before</b> work starts. Report problems to the coordinator the same day.</li>
+  </ul></div>
+
+  <h3>📞 Coordinator contact</h3>
+  <div class="card">
+    <div class="kv"><span>Coordinator (demo)</span><b class="mono">+91-98XXX-XXXXX</b></div>
+    <p class="tiny">DEMO placeholder — not a real number. In the pilot, the coordinator answers calls, matches workers, assigns time slots and guides workers by phone.</p>
+  </div>
+
+  <div class="notice">
+    <h3>📋 Compliance notes (headlines, not legal advice)</h3>
+    <ul style="margin:.2rem 0;padding-left:1.2rem;font-size:.92rem">
+      <li>Bihar minimum-wage rules apply, including for domestic work; hourly wage = daily ÷ 8; equal pay for men and women.</li>
+      <li>Contract Labour Act licensing questions arise at 20+ contract workers — the pilot stays far below this.</li>
+      <li>Bihar's Platform-Based Gig Workers (Social Security &amp; Welfare) Act, 2025 may add a welfare levy — to be verified with legal counsel before any commercial launch.</li>
+      <li>Workers can be supported to register on e-Shram (unorganised worker database).</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Patna Labor Platform — PILOT DEMO.</b> This is a demonstration website. It is <b>not an operating business</b>; bookings and registrations shown here are demo data stored only in your own browser (localStorage) and nothing is sent anywhere. Commercial operation would require the owner's separate written sanction.</p>
+    <p>Money model: customer pays the worker directly (cash/UPI); platform takes a flat <b>₹49</b> booking fee per booking. No commission is cut from worker pay.</p>
+    <p class="tiny">Built with free tools only (GitHub Pages). Research notes that informed this demo are on file with the owner.</p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ===== Adjustable platform figures ===== */
+const BOOKING_FEE = 49; // flat platform booking fee per booking (INR) — adjustable
+const WAGE_FLOOR_DAY = 436; // Bihar statutory minimum, unskilled, from 1 Apr 2026
+
+const AREAS = ["Boring Road","Digha","Anisabad","Kankarbagh","Patna City","Danapur","Bailey Road","Rajendra Nagar","Ashok Rajpath","Frazer Road","Exhibition Road","Mithapur","Phulwari Sharif","Bihta","Sampatchak"];
+const SKILLS = ["Room Cleaning","Bathroom Cleaning","Laundry/Washing","Utensils","Odd Jobs","Painting","Loading/Unloading","Gardening","Construction Help","Cooking Help"];
+const AVAIL = ["Morning (7\u201311 AM)","Afternoon (11 AM\u20133 PM)","Evening (3\u20137 PM)"];
+const STATUSES = ["requested","confirmed","assigned","en route","completed"];
+const LS_B = "plp_bookings_v1", LS_W = "plp_workers_v1", LS_S = "plp_seeded_v1";
+
+function load(k, fb){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; }catch(e){ return fb; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+let bookings = load(LS_B, []);
+let workers = load(LS_W, []);
+
+function seedDemo(){
+  if (localStorage.getItem(LS_S)) return;
+  workers = [
+    {id:"W-DEMO-1",name:"Ramesh Kumar (demo)",phone:"+91-98XXX-XXX01",skills:["Room Cleaning","Utensils"],area:"Boring Road",avail:["Morning (7\u201311 AM)"],demo:true},
+    {id:"W-DEMO-2",name:"Sunita Devi (demo)",phone:"+91-98XXX-XXX02",skills:["Laundry/Washing","Room Cleaning"],area:"Kankarbagh",avail:["Morning (7\u201311 AM)","Afternoon (11 AM\u20133 PM)"],demo:true},
+    {id:"W-DEMO-3",name:"Mohammad Salim (demo)",phone:"+91-98XXX-XXX03",skills:["Construction Help","Loading/Unloading"],area:"Digha",avail:["Morning (7\u201311 AM)","Afternoon (11 AM\u20133 PM)","Evening (3\u20137 PM)"],demo:true},
+    {id:"W-DEMO-4",name:"Anil Paswan (demo)",phone:"+91-98XXX-XXX04",skills:["Odd Jobs","Painting","Gardening"],area:"Anisabad",avail:["Afternoon (11 AM\u20133 PM)","Evening (3\u20137 PM)"],demo:true},
+    {id:"W-DEMO-5",name:"Pinki Kumari (demo)",phone:"+91-98XXX-XXX05",skills:["Bathroom Cleaning","Room Cleaning"],area:"Rajendra Nagar",avail:["Morning (7\u201311 AM)"],demo:true}
+  ];
+  const today = new Date().toISOString().slice(0,10);
+  bookings = [
+    {id:"PLP-DEMO-1",name:"Demo Customer A",phone:"+91-98XXX-XXX11",service:"Room Cleaning",date:today,slot:"2 hours",area:"Boring Road",addr:"Demo address, near Boring Road crossing",status:"requested",workerId:null,demo:true,fee:BOOKING_FEE},
+    {id:"PLP-DEMO-2",name:"Demo Customer B",phone:"+91-98XXX-XXX12",service:"Manpower",date:today,slot:"Full day (8 hrs)",area:"Digha",addr:"Demo site, Digha",status:"assigned",workerId:"W-DEMO-3",demo:true,fee:BOOKING_FEE},
+    {id:"PLP-DEMO-3",name:"Demo Customer C",phone:"+91-98XXX-XXX13",service:"Laundry",date:today,slot:"1 hour",area:"Kankarbagh",addr:"Demo address, Kankarbagh",status:"completed",workerId:"W-DEMO-2",demo:true,fee:BOOKING_FEE}
+  ];
+  save(LS_W, workers); save(LS_B, bookings);
+  try{ localStorage.setItem(LS_S, "1"); }catch(e){}
+}
+seedDemo();
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function statusPill(s){
+  const m = {"requested":"pill-amber","confirmed":"pill-blue","assigned":"pill-blue","en route":"pill-blue","completed":"pill-green","cancelled":"pill-red"};
+  return '<span class="pill '+(m[s]||"pill-gray")+'">'+esc(s.toUpperCase())+'</span>';
+}
+function workerName(id){ const w = workers.find(x=>x.id===id); return w ? w.name : "—"; }
+
+/* ===== populate selects & chips ===== */
+function fillAreas(){
+  ["bArea","wArea","fArea"].forEach(id=>{
+    const el = document.getElementById(id); if(!el) return;
+    const keepFirst = id==="fArea";
+    el.innerHTML = (keepFirst?'<option value="">All areas</option>':'') + AREAS.map(a=>'<option>'+esc(a)+'</option>').join("");
+  });
+  document.getElementById("areaChips").innerHTML = AREAS.map(a=>"<span>"+esc(a)+"</span>").join("");
+  document.getElementById("fSkill").innerHTML = '<option value="">All skills</option>' + SKILLS.map(s=>'<option>'+esc(s)+'</option>').join("");
+  document.getElementById("wSkills").innerHTML = SKILLS.map(s=>'<label><input type="checkbox" value="'+esc(s)+'">'+esc(s)+'</label>').join("");
+  document.getElementById("wAvail").innerHTML = AVAIL.map(a=>'<label><input type="checkbox" value="'+esc(a)+'">'+esc(a)+'</label>').join("");
+}
+
+/* ===== booking form ===== */
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const b = {
+    id: "PLP-" + Date.now().toString(36).toUpperCase(),
+    name: document.getElementById("bName").value.trim(),
+    phone: document.getElementById("bPhone").value.trim(),
+    service: document.getElementById("bService").value,
+    date: document.getElementById("bDate").value,
+    slot: document.getElementById("bSlot").value,
+    area: document.getElementById("bArea").value,
+    addr: document.getElementById("bAddr").value.trim(),
+    status: "requested", workerId: null, demo:false, fee: BOOKING_FEE
+  };
+  bookings.unshift(b); save(LS_B, bookings);
+  document.getElementById("bookMsg").textContent = "✅ Request received! Booking ID " + b.id + " — status: REQUESTED. The coordinator will call " + b.phone + " to confirm. Booking fee ₹" + BOOKING_FEE + " (flat). You pay the worker directly after the work.";
+  this.reset(); renderAll();
+  document.getElementById("myBookings").scrollIntoView({behavior:"smooth",block:"nearest"});
+});
+
+/* ===== worker form ===== */
+document.getElementById("workerForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const skills = [...document.querySelectorAll('#wSkills input:checked')].map(i=>i.value);
+  const avail = [...document.querySelectorAll('#wAvail input:checked')].map(i=>i.value);
+  if(!skills.length){ document.getElementById("workerMsg").textContent = "Please tick at least one skill."; return; }
+  const w = {
+    id: "W-" + Date.now().toString(36).toUpperCase(),
+    name: document.getElementById("wName").value.trim(),
+    phone: document.getElementById("wPhone").value.trim(),
+    skills, area: document.getElementById("wArea").value,
+    avail: avail.length?avail:["Morning (7\u201311 AM)","Afternoon (11 AM\u20133 PM)","Evening (3\u20137 PM)"],
+    demo:false
+  };
+  workers.unshift(w); save(LS_W, workers);
+  document.getElementById("workerMsg").textContent = "✅ Registered! Worker ID " + w.id + ". The coordinator will call you when a matching job comes up. No registration fee — you are paid directly by the customer.";
+  this.reset(); renderAll();
+});
+
+/* ===== renders ===== */
+function renderMyBookings(){
+  const el = document.getElementById("myBookings");
+  if(!bookings.length){ el.innerHTML = '<p class="empty">No requests yet.</p>'; return; }
+  el.innerHTML = bookings.map(b=>
+    '<div class="card"><div class="kv"><span><b>'+esc(b.id)+'</b> '+(b.demo?'<span class="pill pill-gray">DEMO</span>':'')+'</span>'+statusPill(b.status)+'</div>'+
+    '<div class="kv"><span>Service</span><b>'+esc(b.service)+' • '+esc(b.slot)+'</b></div>'+
+    '<div class="kv"><span>Date</span><b>'+esc(b.date)+'</b></div>'+
+    '<div class="kv"><span>Area</span><b>'+esc(b.area)+'</b></div>'+
+    (b.workerId?'<div class="kv"><span>Worker</span><b>'+esc(workerName(b.workerId))+'</b></div>':'')+
+    '<div class="kv"><span>Booking fee</span><b>₹'+b.fee+' (flat)</b></div>'+
+    '<p class="tiny">Pay the worker directly (cash/UPI) after work. Platform takes only the ₹'+b.fee+' booking fee.</p></div>'
+  ).join("");
+}
+
+function nextStatus(s){ const i = STATUSES.indexOf(s); return i>=0 && i<STATUSES.length-1 ? STATUSES[i+1] : null; }
+
+function renderPipeline(){
+  const el = document.getElementById("pipeline");
+  if(!bookings.length){ el.innerHTML = '<p class="empty">No bookings yet.</p>'; return; }
+  el.innerHTML = bookings.map(b=>{
+    const ns = nextStatus(b.status);
+    const cand = workers.filter(w=>b.service==="Manpower" ? w.skills.includes("Construction Help")||w.skills.includes("Loading/Unloading") : true);
+    return '<div class="card"><div class="kv"><span><b>'+esc(b.id)+'</b> '+(b.demo?'<span class="pill pill-gray">DEMO</span>':'')+'</span>'+statusPill(b.status)+'</div>'+
+    '<div class="kv"><span>Customer</span><b>'+esc(b.name)+' • <span class="mono">'+esc(b.phone)+'</span></b></div>'+
+    '<div class="kv"><span>Job</span><b>'+esc(b.service)+' • '+esc(b.slot)+' • '+esc(b.date)+'</b></div>'+
+    '<div class="kv"><span>Area</span><b>'+esc(b.area)+'</b></div>'+
+    '<div class="kv"><span>Address</span><b>'+esc(b.addr)+'</b></div>'+
+    '<div class="kv"><span>Worker</span><b>'+esc(workerName(b.workerId))+'</b></div>'+
+    '<div class="statusbar">'+
+      (ns?'<button class="btn btn-sm" onclick="setStatus(\''+b.id+'\',\''+ns+'\')">→ '+esc(ns)+'</button>':'')+
+      (b.status!=="completed"&&b.status!=="cancelled"?'<button class="btn btn-sm btn-danger" onclick="setStatus(\''+b.id+'\',\'cancelled\')">✕ Cancel</button>':'')+
+    '</div>'+
+    (b.status==="confirmed"||b.status==="requested" ?
+      '<div><label style="margin:.4rem 0 .2rem">Assign worker <span class="tiny">(call/SMS the worker after assigning)</span></label>'+
+      '<select id="asg-'+b.id+'" style="margin-bottom:.3rem"><option value="">— choose worker —</option>'+
+      cand.map(w=>'<option value="'+w.id+'">'+esc(w.name)+' • '+esc(w.area)+' • '+esc(w.skills.join(", "))+'</option>').join("")+
+      '</select><button class="btn btn-sm btn-sec" onclick="assignWorker(\''+b.id+'\')">Assign</button></div>' : '')+
+    '</div>';
+  }).join("");
+}
+
+function renderWorkers(){
+  const fs = document.getElementById("fSkill").value, fa = document.getElementById("fArea").value, fv = document.getElementById("fAvail").value;
+  const list = workers.filter(w =>
+    (!fs || w.skills.includes(fs)) && (!fa || w.area===fa) && (!fv || w.avail.includes(fv)));
+  const el = document.getElementById("workerList");
+  if(!list.length){ el.innerHTML = '<p class="empty">No workers match these filters.</p>'; return; }
+  el.innerHTML = list.map(w=>
+    '<div class="card"><div class="kv"><span><b>'+esc(w.name)+'</b> '+(w.demo?'<span class="pill pill-gray">DEMO</span>':'')+'</span><span class="mono tiny">'+esc(w.phone)+'</span></div>'+
+    '<div style="margin:.3rem 0">'+w.skills.map(s=>'<span class="pill pill-green">'+esc(s)+'</span>').join("")+'</div>'+
+    '<div class="kv"><span>Home area</span><b>'+esc(w.area)+'</b></div>'+
+    '<div class="kv"><span>Availability</span><b>'+esc(w.avail.join(", "))+'</b></div></div>'
+  ).join("");
+}
+
+window.setStatus = function(id, s){
+  const b = bookings.find(x=>x.id===id); if(!b) return;
+  b.status = s; save(LS_B, bookings); renderAll();
+};
+window.assignWorker = function(bid){
+  const sel = document.getElementById("asg-"+bid);
+  if(!sel || !sel.value){ alert("Choose a worker first."); return; }
+  const b = bookings.find(x=>x.id===bid); if(!b) return;
+  b.workerId = sel.value; b.status = "assigned"; save(LS_B, bookings); renderAll();
+};
+
+function renderAll(){ renderMyBookings(); renderPipeline(); renderWorkers(); }
+document.getElementById("fSkill").addEventListener("change", renderWorkers);
+document.getElementById("fArea").addEventListener("change", renderWorkers);
+document.getElementById("fAvail").addEventListener("change", renderWorkers);
+
+fillAreas(); renderAll();
+</script>
+</body>
+</html>
