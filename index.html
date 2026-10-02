@@ -66,6 +66,16 @@ footer a{color:#fde68a}
 .kv{display:flex;justify-content:space-between;gap:.6rem;padding:.3rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
 .kv b{text-align:right}
 .empty{color:var(--mut);font-style:italic}
+
+/* ===== worker register print ===== */
+@media print{
+  @page{size:landscape;margin:8mm}
+  body{background:#fff}
+  .topbar,.tabs,footer,section:not(#register),.no-print{display:none!important}
+  section#register{padding:0;max-width:none}
+  #regTable{font-size:8.5pt}
+  #regTable th,#regTable td{padding:3px 4px}
+}
 </style>
 </head>
 <body>
@@ -83,6 +93,7 @@ footer a{color:#fde68a}
   <a href="#book">📝 Book</a>
   <a href="#join">🙋 Join as Worker</a>
   <a href="#coordinator">📋 Coordinator</a>
+  <a href="#register">📒 Register</a>
   <a href="#info">ℹ️ Areas &amp; Wages</a>
 </nav>
 
@@ -252,6 +263,39 @@ footer a{color:#fde68a}
     </div>
   </div>
   <div id="workerList"></div>
+</section>
+
+<!-- ============ REGISTER ============ -->
+<section id="register">
+  <h2><span class="hi">रजिस्टर</span> • Worker Register <span class="pill pill-amber">NEW</span></h2>
+  <p class="lead">Excel/CSV upload karein — register table apne aap ban jayega. Dobara type karne ki zaroorat nahi. <span class="tiny">(Upload an Excel/CSV file — the register builds itself. No re-typing.)</span></p>
+
+  <div class="card no-print">
+    <h3>📤 Step 1 — Excel taiyaar karein <span class="tiny">(prepare your sheet)</span></h3>
+    <ol style="margin:.2rem 0;padding-left:1.2rem;font-size:.93rem">
+      <li>Excel me <b>ek row per worker</b> bharein — pehli row me column headings honi chahiye.</li>
+      <li>Zaroori columns: <b>Name, Phone, Skills, Home Area</b> — baaki sab optional hain.</li>
+      <li>File save karein as <b>.xlsx</b> ya <b>.csv</b>.</li>
+    </ol>
+    <a id="tplLink" class="btn btn-sec btn-sm" href="#" download="worker-template.csv" style="text-decoration:none">⬇️ Sample template download karein (CSV)</a>
+    <p class="tiny">Template me exact headings + 2 demo rows hain — ise copy karke apna data bharein.</p>
+  </div>
+
+  <div class="card no-print">
+    <h3>📤 Step 2 — File upload karein</h3>
+    <label for="regFile">Excel/CSV file chunein</label>
+    <input type="file" id="regFile" accept=".xlsx,.xls,.csv">
+    <button class="btn" id="regBuildBtn" type="button">📒 Register banayein — Build register</button>
+    <p id="regMsg" class="tiny"></p>
+    <p class="tiny">Note: .xlsx ke liye ek baar internet chahiye (library load hoti hai). .csv hamesha offline kaam karta hai.</p>
+  </div>
+
+  <div id="regSummary"></div>
+  <div id="regWrap" style="overflow-x:auto"></div>
+  <div class="no-print" style="margin-top:.8rem">
+    <button class="btn" id="regPrintBtn" type="button" style="display:none">🖨️ Print / Save as PDF — प्रिंट करें</button>
+  </div>
+  <p class="tiny no-print">Tip: Print dialog me <b>"Save as PDF"</b> chunein — register PDF me save ho jayega.</p>
 </section>
 
 <!-- ============ INFO ============ -->
@@ -467,6 +511,148 @@ function renderAll(){ renderMyBookings(); renderPipeline(); renderWorkers(); }
 document.getElementById("fSkill").addEventListener("change", renderWorkers);
 document.getElementById("fArea").addEventListener("change", renderWorkers);
 document.getElementById("fAvail").addEventListener("change", renderWorkers);
+
+/* ===== worker register: upload Excel/CSV -> table -> print ===== */
+const REG_HEADERS = ["Name","Phone","Skills","Home Area","Availability","Expected Daily Wage","Experience","ID Proof","Emergency Contact"];
+const REG_HI = {"Name":"\u0928\u093e\u092e","Phone":"\u092b\u093c\u094b\u0928","Skills":"\u0939\u0941\u0928\u0930","Home Area":"\u0915\u094d\u0937\u0947\u0924\u094d\u0930","Availability":"\u0909\u092a\u0932\u092c\u094d\u0927\u0924\u093e","Expected Daily Wage":"\u0926\u093f\u0939\u093e\u0921\u093c\u0940","Experience":"\u0905\u0928\u0941\u092d\u0935","ID Proof":"\u092a\u0939\u091a\u093e\u0928","Emergency Contact":"\u0906\u092a\u093e\u0924\u0915\u093e\u0932\u0940\u0928 \u0938\u0902\u092a\u0930\u094d\u0915"};
+const REG_ALIAS = {
+  "name":["name","full name","naam","\u0928\u093e\u092e","\u092a\u0942\u0930\u093e \u0928\u093e\u092e"],
+  "phone":["phone","mobile","phone number","mobile number","\u092b\u093c\u094b\u0928","\u092b\u093c\u094b\u0928 \u0928\u0902\u092c\u0930","\u092e\u094b\u092c\u093e\u0907\u0932","\u092e\u094b\u092c\u093e\u0907\u0932 \u0928\u0902\u092c\u0930"],
+  "skills":["skills","skill","hunr","kaam","\u0939\u0941\u0928\u0930","\u0915\u093e\u092e"],
+  "area":["home area","area","\u0915\u094d\u0937\u0947\u0924\u094d\u0930","\u0918\u0930 \u0915\u093e \u0915\u094d\u0937\u0947\u0924\u094d\u0930"],
+  "availability":["availability","\u0909\u092a\u0932\u092c\u094d\u0927\u0924\u093e","timing","time"],
+  "wage":["expected daily wage","daily wage","wage","expected wage","\u092e\u091c\u093c\u0926\u0942\u0930\u0940","\u0926\u093f\u0939\u093e\u0921\u093c\u0940","\u092e\u091c\u0926\u0942\u0930\u0940"],
+  "experience":["experience","\u0905\u0928\u0941\u092d\u0935"],
+  "idproof":["id proof","id","\u092a\u0939\u091a\u093e\u0928","aadhaar","aadhar"],
+  "emergency":["emergency contact","emergency","\u0906\u092a\u093e\u0924\u0915\u093e\u0932\u0940\u0928","\u0906\u092a\u093e\u0924\u0915\u093e\u0932\u0940\u0928 \u0938\u0902\u092a\u0930\u094d\u0915"]
+};
+const REG_KEYS = ["name","phone","skills","area","availability","wage","experience","idproof","emergency"];
+const REG_REQUIRED = ["name","phone","skills","area"];
+const REG_KEY2HEADER = {name:"Name",phone:"Phone",skills:"Skills",area:"Home Area",availability:"Availability",wage:"Expected Daily Wage",experience:"Experience",idproof:"ID Proof",emergency:"Emergency Contact"};
+
+function regTemplateCSV(){
+  const rows = [REG_HEADERS.join(",")];
+  rows.push('Demo Worker 1,+91-98XXX-XXX21,"Room Cleaning, Utensils",Boring Road,Morning (7-11 AM),500,3 years,Aadhaar,+91-98XXX-XXX22');
+  rows.push('Demo Worker 2,+91-98XXX-XXX23,"Construction Help, Loading/Unloading",Digha,Full day,550,5 years,Aadhaar,+91-98XXX-XXX24');
+  return rows.join("\r\n");
+}
+document.getElementById("tplLink").href = "data:text/csv;charset=utf-8," + encodeURIComponent(regTemplateCSV());
+
+function parseCSV(text){
+  const rows=[]; let row=[], cur="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; }
+      else cur+=c;
+    }else{
+      if(c==='"') q=true;
+      else if(c===","){row.push(cur);cur="";}
+      else if(c==="\n"){row.push(cur);rows.push(row);row=[];cur="";}
+      else if(c==="\r"){}
+      else cur+=c;
+    }
+  }
+  if(cur!==""||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+
+function normHead(h){ return String(h==null?"":h).trim().toLowerCase().replace(/\s+/g," "); }
+function mapColumns(headers){
+  const normed = headers.map(normHead);
+  const map = {};
+  REG_KEYS.forEach(k=>{
+    for(const a of REG_ALIAS[k]){
+      const ix = normed.indexOf(a);
+      if(ix>=0){ map[k]=ix; break; }
+    }
+  });
+  return map;
+}
+
+function buildRegister(headers, dataRows){
+  const map = mapColumns(headers);
+  const msg = document.getElementById("regMsg");
+  const missing = REG_REQUIRED.filter(k=>!(k in map));
+  if(missing.length){
+    const names = missing.map(k=>REG_KEY2HEADER[k]).join(", ");
+    msg.innerHTML = '<span style="color:var(--red);font-weight:700">\u274c Ye zaroori columns nahi mile / \u0906\u0935\u0936\u094d\u092f\u0915 \u0915\u0949\u0932\u092e \u0928\u0939\u0940\u0902 \u092e\u093f\u0932\u0947: <b>'+esc(names)+'</b>. Pehli row me headings check karein ya sample template download karein.</span>';
+    document.getElementById("regWrap").innerHTML="";
+    document.getElementById("regSummary").innerHTML="";
+    document.getElementById("regPrintBtn").style.display="none";
+    return;
+  }
+  const recs = [];
+  dataRows.forEach(r=>{
+    const rec = {};
+    REG_KEYS.forEach(k=>{ rec[k] = (k in map && map[k]<r.length) ? String(r[map[k]]).trim() : ""; });
+    if(REG_KEYS.every(k=>!rec[k])) return;
+    if(!rec.name && !rec.phone) return;
+    recs.push(rec);
+  });
+  if(!recs.length){
+    msg.innerHTML = '<span style="color:var(--red);font-weight:700">\u274c File me koi worker row nahi mili. Pehli row headings ki hai \u2014 uske neeche data rows bharein.</span>';
+    document.getElementById("regWrap").innerHTML="";
+    document.getElementById("regSummary").innerHTML="";
+    document.getElementById("regPrintBtn").style.display="none";
+    return;
+  }
+  const isSample = recs.some(r=>/demo/i.test(r.name));
+  const skillCount = {};
+  recs.forEach(r=>{ r.skills.split(/[,;\/|]/).map(s=>s.trim()).filter(Boolean).forEach(s=>{ skillCount[s]=(skillCount[s]||0)+1; }); });
+  const top = Object.entries(skillCount).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>esc(e[0])+" ("+e[1]+")").join(" \u2022 ");
+  document.getElementById("regSummary").innerHTML =
+    '<div class="card"><h3>\uD83D\uDCCA Summary '+(isSample?'<span class="pill pill-gray">SAMPLE DATA</span>':'')+'</h3>'+
+    '<div class="kv"><span>Total workers \u2022 \u0915\u0941\u0932 \u092e\u091c\u093c\u0926\u0942\u0930</span><b>'+recs.length+'</b></div>'+
+    (top?'<p class="tiny">Skills: '+top+'</p>':'')+'</div>';
+  const thead = '<tr><th>\u0915\u094d\u0930.\u0938\u0902.<br><span class="tiny">S.No</span></th>'+
+    REG_HEADERS.map(h=>'<th>'+esc(REG_HI[h]||h)+'<br><span class="tiny">'+esc(h)+'</span></th>').join("")+'</tr>';
+  const tbody = recs.map((r,i)=>'<tr><td>'+(i+1)+'</td>'+REG_KEYS.map(k=>'<td>'+esc(r[k]||"\u2014")+'</td>').join("")+'</tr>').join("");
+  document.getElementById("regWrap").innerHTML = '<table class="rates" id="regTable"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table>';
+  document.getElementById("regPrintBtn").style.display="block";
+  msg.innerHTML = '\u2705 <b>'+recs.length+'</b> workers ka register taiyaar hai. Neeche table dekhein ya "Print / Save as PDF" dabayein.';
+}
+
+function loadXLSXLib(ok, fail){
+  if(window.XLSX) return ok();
+  const s=document.createElement("script");
+  s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+  s.onload=ok; s.onerror=fail;
+  document.head.appendChild(s);
+}
+
+document.getElementById("regBuildBtn").addEventListener("click", function(){
+  const f = document.getElementById("regFile").files[0];
+  const msg = document.getElementById("regMsg");
+  if(!f){ msg.textContent = "Pehle file chunein \u2014 file select karein."; return; }
+  const ext = f.name.split(".").pop().toLowerCase();
+  msg.textContent = "\u23F3 File padhi ja rahi hai\u2026";
+  if(ext==="csv"){
+    const rd = new FileReader();
+    rd.onload = ()=>{ const rows = parseCSV(String(rd.result).replace(/^\uFEFF/,"")); buildRegister(rows[0]||[], rows.slice(1)); };
+    rd.onerror = ()=>{ msg.textContent = "\u274c File padhne me error aaya."; };
+    rd.readAsText(f);
+  } else if(ext==="xlsx"||ext==="xls"){
+    loadXLSXLib(()=>{
+      const rd = new FileReader();
+      rd.onload = ()=>{
+        try{
+          const wb = XLSX.read(rd.result, {type:"array"});
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
+          buildRegister(rows[0]||[], rows.slice(1));
+        }catch(e){ msg.textContent = "\u274c Excel file padhne me error: " + e.message; }
+      };
+      rd.onerror = ()=>{ msg.textContent = "\u274c File padhne me error aaya."; };
+      rd.readAsArrayBuffer(f);
+    }, ()=>{
+      msg.innerHTML = '\u26A0\uFE0F XLSX library load nahi hui (internet chahiye). <b>CSV file upload karein</b> \u2014 wo hamesha kaam karta hai.';
+    });
+  } else {
+    msg.textContent = "\u274c Sirf .xlsx, .xls ya .csv file upload karein.";
+  }
+});
+document.getElementById("regPrintBtn").addEventListener("click", ()=>window.print());
 
 fillAreas(); renderAll();
 </script>
